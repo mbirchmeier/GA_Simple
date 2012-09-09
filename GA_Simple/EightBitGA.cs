@@ -113,7 +113,10 @@ namespace GA_Simple
             return sb.ToString();
         }
 
-
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
         public IGeneticAlgorithm CreateChild(IGeneticAlgorithm mate)
         {
             if (!(mate is EightByteGA))
@@ -146,6 +149,26 @@ namespace GA_Simple
 
             return new EightByteGA(childBytes);
 
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is EightByteGA)
+            {
+                EightByteGA typedObj = (EightByteGA)obj;
+                if (typedObj._bytes.Count() == _bytes.Count())
+                {
+                    for (int x= 0; x != _bytes.Count(); x++)
+                    {
+                        if (typedObj._bytes[x] != _bytes[x])
+                        {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            }
+            return false;
         }
         
         public double Fitness {get; set;}

@@ -66,13 +66,19 @@ namespace GA_Simple
                 }
                 currentGeneration.Clear();
 
-                for (int x = 0; x != GenerationSize; x++)
+                while (currentGeneration.Count != GenerationSize)
                 {
                     IGeneticAlgorithm parent1 = RouletteSelect(lastGeneration);
                     IGeneticAlgorithm parent2 = RouletteSelect(lastGeneration);
                     IGeneticAlgorithm child = parent1.CreateChild(parent2);
-                    child.Fitness = tester.GetFitness(child);
-                    currentGeneration.Add(child);
+
+
+                    if (!currentGeneration.Contains(child))
+                    {
+                        child.Fitness = tester.GetFitness(child);
+                        currentGeneration.Add(child);
+                    }
+ 
                 }
 
                 matchFound = currentGeneration.Any(x => x.Value == target);
