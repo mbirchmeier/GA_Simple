@@ -45,7 +45,7 @@ namespace GA_Simple
 
             for (int x = 0; x != GenerationSize; x++)
             {
-                IGeneticAlgorithm ga = new EightByteGA();
+                IGeneticAlgorithm ga = new VariableSizedGA();
                 ga.Fitness = tester.GetFitness(ga);
                 currentGeneration.Add(ga);
             }
@@ -56,6 +56,7 @@ namespace GA_Simple
             {
                 IGeneticAlgorithm strongest = currentGeneration.OrderByDescending(x => x.Fitness).First();
                 Console.WriteLine("Generation {2}\t: Closest value {0} , Fitness: {1}", strongest.Value, strongest.Fitness, generationNumber);
+                //Console.WriteLine(strongest.ToString());
                 generationNumber++;
                 List<IGeneticAlgorithm> lastGeneration = new List<IGeneticAlgorithm>();
 
@@ -85,6 +86,7 @@ namespace GA_Simple
             }
             IGeneticAlgorithm match = currentGeneration.OrderByDescending(x => x.Fitness).First();
             Console.WriteLine("Generation {2}\t: Closest value {0} , Fitness: {1}", match.Value, match.Fitness, generationNumber);
+            Console.WriteLine(match.ToString());
             
 
             Console.WriteLine("Execution complete: Press any key to continue");

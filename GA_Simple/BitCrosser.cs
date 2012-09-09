@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
+using System.Collections;
 
 namespace GA_Simple
 {
@@ -9,43 +11,33 @@ namespace GA_Simple
     {
         public const int BITS_PER_BYTE = 8;
 
-        public static Byte[] Cross(int position, Byte[] parent1, Byte[] parent2)
+        public static BitArray Cross(int position, BitArray parent1, BitArray parent2)
         {
-            List<Byte> toReturn = new List<Byte>();
+            return Cross(position, parent1, position, parent2);
+        }
 
-            int wholeBytesBeforeCross = position / BITS_PER_BYTE;
-
-            for (int x = 0; x != wholeBytesBeforeCross; x++)
+        //cross the first position1 bits from parent1 with the last bits of parent2 starting at position2
+        public static BitArray Cross(int position1, BitArray parent1, int position2, BitArray parent2)
+        {
+            int finalLength = position1 + (parent2.Length - position2);
+            
+            BitArray toReturn = new BitArray(finalLength);
+            for (int x = 0; x != position1; x++)
             {
-                toReturn.Add(parent1[x]);
+                toReturn[x] = parent1[x];
+            }
+            for (int x = position2; x != parent2.Length; x++)
+            {
+                toReturn[position1 + x - position2] = parent2[x];
             }
 
-            int bitsFromFirstByte = position % BITS_PER_BYTE;
-            if (bitsFromFirstByte != 0)
-            {
-                int divisor = (int)Math.Pow(2, bitsFromFirstByte);
-                int p1Part = parent1[wholeBytesBeforeCross] / divisor;
-                int p2Part = parent2[wholeBytesBeforeCross] % divisor;
-                byte newByte = (byte)(p1Part * divisor + p2Part);
-                toReturn.Add(newByte);
-            }
-            for (int x = toReturn.Count(); x != parent2.Length; x++)
-            {
-                toReturn.Add(parent2[x]);
-            }
-
-            return toReturn.ToArray();
+            return toReturn;
 
         }
 
-        public static void FlipBit(int position, ref Byte[] parent)
+        public static void FlipBit(int position, ref BitArray parent)
         {
-            int affectedByte = position / BITS_PER_BYTE;
-            int affectedBit = position % BITS_PER_BYTE;
-
-            byte toAlter = parent[affectedByte];
-            byte toFlip = (byte)Math.Pow(2, affectedBit);
-            toAlter = (byte)(toAlter ^ toFlip); // do a bitwise xor to flip the bit
+            parent[position] = !parent[position];
         }
     }
 }

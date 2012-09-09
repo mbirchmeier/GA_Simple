@@ -6,13 +6,13 @@ using System.Collections;
 
 namespace GA_Simple
 {
-    class EightByteGA : IGeneticAlgorithm
+    class VariableSizedGA : IGeneticAlgorithm
     {
         private BitArray _bits;
         private Gene[] _genes;
         private static Random rand = new Random((int)DateTime.Now.Ticks);
 
-        public EightByteGA()
+        public VariableSizedGA()
         {
             Byte[] bytes = new Byte[8];
             rand.NextBytes(bytes);
@@ -20,12 +20,8 @@ namespace GA_Simple
             _genes = bytes.SelectMany(b => ByteToGenes(b)).ToArray();
         }
 
-        public EightByteGA(BitArray bytes)
+        public VariableSizedGA(BitArray bytes)
         {
-            if (bytes.Length != 64)
-            {
-                throw new Exception("Algorithm must be 8 bits long");
-            }
             _bits = new BitArray(bytes);
             _genes = ToGenes(_bits).ToArray();
         }
@@ -106,7 +102,7 @@ namespace GA_Simple
                 }
             }
 
-            Console.WriteLine("{0} => {1} => {2}", this, cleanEquation.ToString(), toReturn);
+            //Console.WriteLine("{0} => {1} => {2}", this, cleanEquation.ToString(), toReturn);
             return toReturn;
         }
 
@@ -153,19 +149,20 @@ namespace GA_Simple
         }
         public IGeneticAlgorithm CreateChild(IGeneticAlgorithm mate)
         {
-            if (!(mate is EightByteGA))
+            if (!(mate is VariableSizedGA))
             {
                 throw new Exception("Unable to mate with different types currently");
             }
-            EightByteGA typedMate = (EightByteGA)mate;
+            VariableSizedGA typedMate = (VariableSizedGA)mate;
 
             BitArray childBytes;
 
             //99% chance of mating
             if (rand.NextDouble() <= .99)
             {
-                int crossoverPoint = rand.Next(1, 63); // select crossover point for mate
-                childBytes = BitCrosser.Cross(crossoverPoint, _bits, typedMate._bits);
+                int myCrossoverPoint = rand.Next(0, _bits.Length); // select crossover point for mate
+                int mateCrossoverPoint = rand.Next(0, typedMate._bits.Length); // select crossover point for mate
+                childBytes = BitCrosser.Cross(myCrossoverPoint, _bits, mateCrossoverPoint, typedMate._bits);
             }
             //1% chance of just moving through
             else
@@ -177,19 +174,19 @@ namespace GA_Simple
             //.1% chance of a mutation
             if (rand.NextDouble() <= .001)
             {
-                int mutate = rand.Next(0, 63);
+                int mutate = rand.Next(0, childBytes.Length);
                 BitCrosser.FlipBit(mutate, ref childBytes);
             }
 
-            return new EightByteGA(childBytes);
+            return new VariableSizedGA(childBytes);
 
         }
 
         public override bool Equals(object obj)
         {
-            if (obj is EightByteGA)
+            if (obj is VariableSizedGA)
             {
-                EightByteGA typedObj = (EightByteGA)obj;
+                VariableSizedGA typedObj = (VariableSizedGA)obj;
                 if (typedObj._bits.Length == _bits.Length)
                 {
                     for (int x= 0; x != _bits.Length; x++)
