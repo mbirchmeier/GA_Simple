@@ -43,6 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EightBitGA.cs" />
+    <Compile Include="FitnessTester.cs" />
+    <Compile Include="Gene.cs" />
+    <Compile Include="IGeneticAlgorithm.cs" />
+    <Compile Include="Operation.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
