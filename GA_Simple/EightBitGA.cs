@@ -9,7 +9,7 @@ namespace GA_Simple
     {
         private byte[] _bytes = new byte[8];
         private Gene[] _genes;
-        private Random rand = new Random((int)DateTime.Now.Ticks);
+        private static Random rand = new Random((int)DateTime.Now.Ticks);
 
         public EightByteGA()
         {
@@ -34,7 +34,20 @@ namespace GA_Simple
             return new Gene[]{top, bottom};
         }
 
-        public double GetValue()
+        private double? _value = null;
+        public Double Value 
+        { 
+            get
+            {
+                if (_value.HasValue)
+                    return _value.Value;
+                _value = GetValue();
+                return _value.Value;
+            }
+
+        }
+
+        private double GetValue()
         {
             double toReturn = 0;
             StringBuilder cleanEquation = new StringBuilder();
@@ -60,7 +73,7 @@ namespace GA_Simple
             }
 
             Console.WriteLine("{0} => {1} => {2}", this, cleanEquation.ToString(), toReturn);
-            return 0.0;
+            return toReturn;
         }
 
         public void Apply(ref double current, Operation operation, double next)
@@ -99,5 +112,42 @@ namespace GA_Simple
             }
             return sb.ToString();
         }
+
+
+        public IGeneticAlgorithm CreateChild(IGeneticAlgorithm mate)
+        {
+            if (!(mate is EightByteGA))
+            {
+                throw new Exception("Unable to mate with different types currently");
+            }
+            EightByteGA typedMate = (EightByteGA)mate;
+
+            byte[] childBytes;
+
+            //99% chance of mating
+            if (rand.NextDouble() <= .99)
+            {
+                int crossoverPoint = rand.Next(1, 63); // select crossover point for mate
+                childBytes = BitCrosser.Cross(crossoverPoint, _bytes, typedMate._bytes);
+            }
+            //1% chance of just moving through
+            else
+            {
+                childBytes = this._bytes;
+            }
+
+            
+            //.1% chance of a mutation
+            if (rand.NextDouble() <= .001)
+            {
+                int mutate = rand.Next(0, 63);
+                BitCrosser.FlipBit(mutate, ref childBytes);
+            }
+
+            return new EightByteGA(childBytes);
+
+        }
+        
+        public double Fitness {get; set;}
     }
 }

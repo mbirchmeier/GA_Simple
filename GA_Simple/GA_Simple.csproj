@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BitCrosser.cs" />
     <Compile Include="EightBitGA.cs" />
     <Compile Include="FitnessTester.cs" />
     <Compile Include="Gene.cs" />

@@ -15,7 +15,12 @@ namespace GA_Simple
 
         public double GetFitness(IGeneticAlgorithm toTest)
         {
-            return 1.0 / Math.Abs(_target - toTest.GetValue());
+            double actual = toTest.Value;
+
+            if (actual == _target)
+                return double.MaxValue;
+
+            return 1.0 / Math.Abs(_target - actual);
         }
 
 

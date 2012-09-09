@@ -7,6 +7,10 @@ namespace GA_Simple
 {
     interface IGeneticAlgorithm
     {
-        double GetValue();
+        double Value{get;}
+
+        IGeneticAlgorithm CreateChild(IGeneticAlgorithm mate);
+
+        double Fitness { get; set; }
     }
 }
